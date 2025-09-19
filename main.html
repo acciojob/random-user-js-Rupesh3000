@@ -1,27 +1,79 @@
-<!DOCTYPE html>
+		<!DOCTYPE html>
+		
+		<html>
+		
+		<head>
+			<link rel="stylesheet" href="styles.css">
+		</head>
+		
+		<body>
+			<img id="userImage" src="" alt="User Image">
+    <h2 id="userName"></h2>
+    <div class="buttons">
+		 <h3>Additional Info</h3>
+        <p id="infoContent"></p>
+        <button data-attr="age">Age</button>
+        <button data-attr="email">Email</button>
+        <button data-attr="phone">Phone</button>
+    </div>
+    <button id="getUser">Get New User</button>
+    
 
-<html>
+    <script>
+        let currentUser = null;
 
-<head>
-	<link rel="stylesheet" href="styles.css">
-</head>
+        // Function to fetch a random user from the API
+        async function fetchUser() {
+            try {
+                const response = await fetch('https://randomuser.me/api/');
+                const data = await response.json();
+                currentUser = data.results[0];
+                displayUser();
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                document.getElementById('infoContent').textContent = 'Error fetching user data.';
+            }
+        }
 
-<body>
-	<!-- the entire body must be written by student -->
-		<img src="" alt="">
-  <h1 id="full_name"></h1>
+        // Function to display user data (name and image)
+        function displayUser() {
+            const userImage = document.getElementById('userImage');
+            const userName = document.getElementById('userName');
+            const infoContent = document.getElementById('infoContent');
 
-  <section >
-    <!-- <h2>additional info</h2> -->
-    <h3 id="additional_info"></h3>
-    <button data-attr="age">Age</button>
-    <button data-attr="email">Email</button>
-    <button data-attr="phone">Phone</button>
-  </section>
-  <button id="getUser">GET ANOTHER USER</button>
-    <script type="text/javascript" src="./script.js">
-</script>
+            userImage.src = currentUser.picture.large;
+            userName.textContent = `${currentUser.name.first} ${currentUser.name.last}`;
+            infoContent.textContent = ''; // Clear additional info on new user load
+        }
 
-</body>
+        // Function to handle button clicks for displaying additional info
+        function handleInfoButtonClick(event) {
+            const attr = event.target.getAttribute('data-attr');
+            const infoContent = document.getElementById('infoContent');
 
-</html>
+            if (attr === 'age') {
+                infoContent.textContent = `${currentUser.dob.age}`;
+            } else if (attr === 'email') {
+                infoContent.textContent = `${currentUser.email}`;
+            } else if (attr === 'phone') {
+                infoContent.textContent = `${currentUser.phone}`;
+            }
+        }
+
+        // Add event listeners to buttons
+        document.querySelectorAll('.buttons button').forEach(button => {
+            button.addEventListener('click', handleInfoButtonClick);
+        });
+
+        // Add event listener to Get New User button
+        document.getElementById('getUser').addEventListener('click', fetchUser);
+
+        // Fetch a user when the page loads
+        fetchUser();
+    </script>
+		    <!-- <script type="text/javascript" src="./script.js"> -->
+		</script>
+		
+		</body>
+		
+		</html>
